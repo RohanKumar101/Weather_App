@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Today Weather</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+
+<body>
+  <div class="d-flex justify-content-center " style="padding: 10vw;">
+    <div class="card " style="background-color: aqua;">
+      <div class="card-body">
+        <form class="d-flex" role="search">
+          <input class="form-control me-2 searchbar" type="search" placeholder="Enter city name" aria-label="Search">
+          <button class="btn btn-outline-dark search" type="submit">Search</button>
+        </form>
+        <div >
+          <p class="pt-2 error" style="display: none;">Invalid city name</p>
+        </div>
+        <div class="weather" style="display: none;">
+          <div>
+            <div class="d-flex justify-content-center pt-4 ">
+              <img src="img/clear.jpeg" alt="rain" class="Weather-icon" style="width: 10vw;">
+            </div>
+
+            <h4 class="d-flex justify-content-center pt-3 temp">22°c</h4>
+            <h5 class="d-flex justify-content-center city">New York</h2>
+          </div>
+          <div class="d-flex pt-5">
+            <div class="me-auto">
+              <h6 class="humidity">50%</h6>
+              <h6>Humidity</h6>
+            </div>
+            <div>
+              <h6 class="wind">15 km/h</h6>
+              <h6>Wind Speed</h6>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    const apikey = "46498044e1f04d38b95ed3b110813121";
+    const apiurl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+    const weatherIcon = document.querySelector(".Weather-icon")
+
+    async function checkweather(city) {
+      const response = await fetch(apiurl + city + `&appid=${apikey}`);
+
+
+      if (response.status == 404) {
+        document.querySelector(".error").style.display = "block";
+        document.querySelector(".weather").style.display = "none";
+      }
+      else {
+        var data = await response.json();
+
+
+        document.querySelector(".city").innerHTML = data.name;
+        document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
+        document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+        document.querySelector(".wind").innerHTML = data.wind.speed + " KM/H";
+
+        if (data.weather[0].main == "Clouds") {
+          weatherIcon.src = "img/cloudy.jpeg"
+        }
+        else if (data.weather[0].main == "Clear") {
+          weatherIcon.src = "img/clear.jpeg"
+        }
+        else if (data.weather[0].main == "Rain") {
+          weatherIcon.src = "img/rain.jpeg"
+        }
+        else if (data.weather[0].main == "Snow") {
+          weatherIcon.src = "img/snow.jpeg"
+        }
+        else if(data.weather[0].main == "Mist"){
+          weatherIcon.src = "img/mist.jpeg" 
+        }
+        else if (data.weather[0].main == "Drizzle") {
+          weatherIcon.src = "img/drizzle.jpeg"
+        }
+        document.querySelector(".weather").style.display = "block"
+        document.querySelector(".error").style.display = "none";
+      }
+
+
+
+
+    }
+
+
+    document.querySelector("form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const city = document.querySelector(".searchbar").value;
+      checkweather(city);
+    })
+
+
+  </script>
+</body>
+
+</html>
